@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle, Loader2 } from "lucide-react"
+import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
 import type { CreditTerm, UpdateCreditTermDto } from "@/types/credit-term"
 import { updateCreditTerm } from "@/lib/credit-term"
@@ -80,20 +80,21 @@ export function CreditTermEdit({ creditTerm, onBack, onUpdate }: CreditTermEditP
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Edit Credit Term</h1>
-        <Button variant="outline" onClick={onBack}>
-          Cancel
+           <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Edit Credit Term</h1>
+        </div>
+        <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Details
         </Button>
       </div>
 
+
       <Card>
         <form onSubmit={handleSubmit}>
-          <CardHeader>
-            <CardTitle>Credit Term Information</CardTitle>
-            <CardDescription>Update the credit term details below</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
+         
+          <CardContent className="space-y-6 mt-5">
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
@@ -107,7 +108,7 @@ export function CreditTermEdit({ creditTerm, onBack, onUpdate }: CreditTermEditP
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="creditTermId">Credit Term ID (Read-only)</Label>
+              <Label htmlFor="creditTermId">Credit Term ID </Label>
               <Input id="creditTermId" value={creditTerm.id} disabled className="bg-muted font-mono" />
             </div>
 

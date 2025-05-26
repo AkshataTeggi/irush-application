@@ -20,27 +20,26 @@ export function CreditTermDetail({ creditTerm, onBack }: CreditTermDetailProps) 
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button variant="outline" size="icon" onClick={onBack}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
           <div>
             <h1 className="text-3xl font-bold">{creditTerm.name}</h1>
-            <p className="text-muted-foreground">Credit Term Details</p>
           </div>
         </div>
-        <Button asChild>
-          <Link href={`/dashboard/credit-terms/${creditTerm.id}/edit`}>
-            <Edit className="mr-2 h-4 w-4" />
-            Edit
-          </Link>
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Button asChild>
+            <Link href={`/dashboard/credit-terms/${creditTerm.id}/edit`}>
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
+            </Link>
+          </Button>
+          <Button variant="outline" onClick={onBack}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back
+          </Button>
+        </div>
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Credit Term Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 mt-5">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
               <label className="text-sm font-medium text-muted-foreground">Name</label>
@@ -50,17 +49,15 @@ export function CreditTermDetail({ creditTerm, onBack }: CreditTermDetailProps) 
               <label className="text-sm font-medium text-muted-foreground">Payment Days</label>
               <p className="text-sm font-medium">{creditTerm.days} days</p>
             </div>
-            <div>
+             <div>
               <label className="text-sm font-medium text-muted-foreground">Status</label>
-              <Badge variant={isActive ? "default" : "secondary"} className="text-sm">
-                {creditTerm.status}
-              </Badge>
+              <p className="text-sm font-medium">{creditTerm.status} </p>
             </div>
+           
           </div>
 
           {creditTerm.description && (
             <>
-              <Separator />
               <div>
                 <label className="text-sm font-medium text-muted-foreground">Description</label>
                 <p className="text-sm mt-1">{creditTerm.description}</p>
@@ -68,10 +65,8 @@ export function CreditTermDetail({ creditTerm, onBack }: CreditTermDetailProps) 
             </>
           )}
 
-          <Separator />
 
           <div>
-            <h3 className="text-lg font-semibold mb-4">System Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
