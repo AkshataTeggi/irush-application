@@ -1,5 +1,6 @@
 // Credit Term Types
 export interface CreditTerm {
+  status: string
   id: string
   name: string
   description?: string
