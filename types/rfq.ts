@@ -34,6 +34,13 @@ export interface RFQSpecification {
   }
 }
 
+export interface RFQAssembly {
+  id: string
+  assemblyId: string
+  name: string
+  value: string
+}
+
 export interface RFQCustomer {
   id: string
   name: string
@@ -69,6 +76,7 @@ export interface RFQ {
   files: RFQFile[]
   services: RFQService[]
   rfqSpecifications: RFQSpecification[]
+  rfqAssembly: RFQAssembly[]
 }
 
 export interface CreateRFQDto {
@@ -77,8 +85,8 @@ export interface CreateRFQDto {
   status?: string
   quantity: string
   customerId: string
-  serviceIds?: string[]
-  specificationIds?: string[]
+  services?: string[]
+  files?: { id: string }[]
 }
 
 export interface UpdateRFQDto {
@@ -87,8 +95,12 @@ export interface UpdateRFQDto {
   status?: string
   quantity?: string
   customerId?: string
-  serviceIds?: string[]
-  specificationIds?: string[]
+  services?: string[]
+  files?: { id: string }[]
+  rfqSpecifications?: {
+    specificationId: string
+    value: string
+  }[]
 }
 
 export interface RFQSearchParams {

@@ -177,11 +177,8 @@ export function CreditTermCreateForm({ onSuccess, onCancel, showCard = true }: C
   if (showCard) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>Create Credit Term</CardTitle>
-          <CardDescription>Add a new payment term for customer transactions</CardDescription>
-        </CardHeader>
-        <CardContent>{formContent}</CardContent>
+       
+        <CardContent className="mt-5">{formContent}</CardContent>
       </Card>
     )
   }

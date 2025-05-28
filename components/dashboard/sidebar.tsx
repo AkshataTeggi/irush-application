@@ -9,7 +9,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { Menu, ChevronRight, LayoutDashboard, Users, FileText, Building2, LogOut, UserCircle, Briefcase, CreditCard } from "lucide-react"
+import { Menu, ChevronRight, LayoutDashboard, Users, FileText, Building2, LogOut, UserCircle, Briefcase, CreditCard, Factory, Receipt, Store } from "lucide-react"
 import { logout } from "@/lib/auth"
 import { ThemeToggle } from "@/components/theme-toggle"
 
@@ -82,6 +82,9 @@ export function DashboardSidebar({ isOpen, setIsOpen }: DashboardSidebarProps) {
         <NavItem href="/dashboard/customers" icon={<Users size={20} />} title="Customers" isCollapsed={!isOpen} />
          <NavItem href="/dashboard/users" icon={<UserCircle size={20} />} title="Users" isCollapsed={!isOpen} />
          <NavItem href="/dashboard/credit-terms" icon={<CreditCard size={20} />} title="Credit Terms" isCollapsed={!isOpen} />
+          <NavItem href="/dashboard/industries" icon={<Factory size={20} />} title="Industries" isCollapsed={!isOpen} />
+          <NavItem href="/dashboard/tax" icon={<Receipt size={20} />} title="Tax" isCollapsed={!isOpen} />
+          <NavItem href="/dashboard/vendors" icon={<Store size={20} />} title="Vendors" isCollapsed={!isOpen} />
       </div>
       <div className="border-t p-3 dark:border-slate-700">
         <div className={cn("flex items-center", isOpen ? "justify-between" : "justify-center")}>
