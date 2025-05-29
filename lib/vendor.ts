@@ -1,4 +1,4 @@
-import { Vendor, CreateVendorDto, UpdateVendorDto } from "@/types/vendors"
+import { Vendor, CreateVendorDto, UpdateVendorDto } from "@/types/vendor"
 import { API_BASE_URL } from "./constants"
 
 

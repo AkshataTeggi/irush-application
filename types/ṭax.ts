@@ -30,3 +30,4 @@ export interface UpdateTaxDto {
   city?: string
   isActive?: boolean
 }
+
