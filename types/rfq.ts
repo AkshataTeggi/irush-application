@@ -42,6 +42,7 @@ export interface RFQAssembly {
 }
 
 export interface RFQCustomer {
+  industryType: any
   id: string
   name: string
   email: string
