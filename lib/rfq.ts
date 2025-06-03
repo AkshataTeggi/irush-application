@@ -439,6 +439,15 @@ export async function uploadFiles(files: File[]): Promise<RFQFile[]> {
         originalname: file.originalname,
         size: file.size,
         mimetype: file.mimetype,
+        path: file.path || "",
+        storageType: file.storageType || "",
+        modelType: file.modelType || "",
+        modelId: file.modelId || "",
+        version: file.version ?? 0,
+        isActive: file.isActive ?? false,
+        metadata: file.metadata,
+        createdAt: file.createdAt || "",
+        updatedAt: file.updatedAt || ""
       }))
     }
 
@@ -450,6 +459,15 @@ export async function uploadFiles(files: File[]): Promise<RFQFile[]> {
         originalname: result.originalname,
         size: result.size,
         mimetype: result.mimetype,
+        path: "",
+        storageType: "",
+        modelType: "",
+        modelId: "",
+        version: 0,
+        isActive: false,
+        metadata: undefined,
+        createdAt: "",
+        updatedAt: ""
       },
     ]
   } catch (error) {
@@ -498,12 +516,6 @@ export async function uploadAndProcessExcelFile(rfqId: string, file: File): Prom
       extractedSpecs: result.extractedSpecs || [],
       extractedAssembly: result.extractedAssembly || [],
       extractedImages: result.extractedImages || [],
-      specifications: result.extractedSpecs || [],
-      assemblyData: result.extractedAssembly || [],
-      images: result.extractedImages || [],
-      totalSpecs: result.extractedSpecs?.length || 0,
-      totalAssembly: result.extractedAssembly?.length || 0,
-      totalImages: result.extractedImages?.length || 0,
     }
   } catch (error) {
     handleApiError(error, `Upload and process Excel file for RFQ ${rfqId}`)

@@ -52,7 +52,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "iRUSH Dashboard",
+  title: "iRUSH Application",
   description: "iRUSH Dashboard Application",
 }
 
