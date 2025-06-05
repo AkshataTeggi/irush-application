@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Eye, Edit, Trash2 } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -13,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,32 +26,33 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteTax } from "@/lib/tax";
-import { useToast } from "@/hooks/use-toast";
-import { Tax } from "@/types/ṭax";
 
-interface TaxListProps {
-  taxes: Tax[];
+import { useToast } from "@/hooks/use-toast";
+import { deleteRole } from "@/lib/roles";
+import { Role } from "@/types/role";
+
+interface RoleListProps {
+  roles?: Role[]; // Make roles optional to handle undefined gracefully
   onRefresh: () => void;
 }
 
-export function TaxList({ taxes, onRefresh }: TaxListProps) {
+export function RoleList({ roles = [], onRefresh }: RoleListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleDelete = async (id: string) => {
     try {
       setDeletingId(id);
-      await deleteTax(id);
+      await deleteRole(id);
       toast({
         title: "Success",
-        description: "Tax deleted successfully",
+        description: "Role deleted successfully",
       });
       onRefresh();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete tax",
+        description: "Failed to delete role",
         variant: "destructive",
       });
     } finally {
@@ -58,13 +60,13 @@ export function TaxList({ taxes, onRefresh }: TaxListProps) {
     }
   };
 
-  if (taxes.length === 0) {
+  if (roles.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-16">
-          <p className="text-muted-foreground text-lg mb-4">No taxes found</p>
+          <p className="text-muted-foreground text-lg mb-4">No roles found</p>
           <Button asChild>
-            <Link href="/dashboard/tax/create">Create your first tax</Link>
+            <Link href="/dashboard/roles/create">Create your first role</Link>
           </Button>
         </CardContent>
       </Card>
@@ -78,41 +80,49 @@ export function TaxList({ taxes, onRefresh }: TaxListProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Rate (%)</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>City</TableHead>
+              <TableHead>Department</TableHead>
+              <TableHead>Description</TableHead>
+              <TableHead>Permissions</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {taxes.map((tax) => (
-              <TableRow key={tax.id}>
-                <TableCell className="font-medium">{tax.name}</TableCell>
-                <TableCell>{tax.rate}%</TableCell>
-                <TableCell>{tax.country || "-"}</TableCell>
-                <TableCell>{tax.city || "-"}</TableCell>
-                <TableCell>{tax.isActive ? "Active" : "Inactive"}</TableCell>
+            {roles.map((role) => (
+              <TableRow key={role.id}>
+                <TableCell className="font-medium">{role.name}</TableCell>
+                <TableCell>{role.departmentName || "-"}</TableCell>
+                <TableCell>{role.description || "-"}</TableCell>
+                <TableCell>
+                  {role.permissions && role.permissions.length > 0
+                    ? role.permissions.map((perm) => perm.name).join(", ")
+                    : "-"}
+                </TableCell>
+
+                <TableCell>{role.isActive ? "Active" : "Inactive"}</TableCell>
+
                 <TableCell>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/tax/${tax.id}`}>
+                      <Link href={`/dashboard/roles/${role.id}`}>
                         <Eye className="h-4 w-4 mr-1" />
                         View
                       </Link>
                     </Button>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/tax/${tax.id}/edit`}>
+                      <Link href={`/dashboard/roles/${role.id}/edit`}>
                         <Edit className="h-4 w-4 mr-1" />
                         Edit
                       </Link>
                     </Button>
+
+                    
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
-                          disabled={deletingId === tax.id}
+                          disabled={deletingId === role.id}
                         >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Delete
@@ -120,16 +130,16 @@ export function TaxList({ taxes, onRefresh }: TaxListProps) {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Tax</AlertDialogTitle>
+                          <AlertDialogTitle>Delete Role</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete "{tax.name}"? This
+                            Are you sure you want to delete "{role.name}"? This
                             action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => handleDelete(tax.id)}
+                            onClick={() => handleDelete(role.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
                             Delete

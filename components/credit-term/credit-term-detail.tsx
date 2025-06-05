@@ -1,27 +1,33 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
-import { Edit, ArrowLeft, Calendar, Clock } from "lucide-react"
-import Link from "next/link"
-import type { CreditTerm } from "@/types/credit-term"
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Edit, ArrowLeft, Calendar, Clock } from "lucide-react";
+import Link from "next/link";
+import type { CreditTerm } from "@/types/credit-term";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 interface CreditTermDetailProps {
-  creditTerm: CreditTerm
-  onBack: () => void
+  creditTerm: CreditTerm;
+  onBack: () => void;
 }
 
-export function CreditTermDetail({ creditTerm, onBack }: CreditTermDetailProps) {
-  const isActive = creditTerm.status === "active"
+export function CreditTermDetail({
+  creditTerm,
+  onBack,
+}: CreditTermDetailProps) {
+  const isActive = creditTerm.status === "active";
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div>
-            <h1 className="text-3xl font-bold">{creditTerm.name}</h1>
+            <h1 className="text-2xl font-bold">Credit Term Details</h1>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -40,56 +46,53 @@ export function CreditTermDetail({ creditTerm, onBack }: CreditTermDetailProps) 
 
       <Card>
         <CardContent className="space-y-6 mt-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Name</label>
-              <p className="text-sm font-medium">{creditTerm.name}</p>
+          <div className="space-y-2">
+            <Label>ID</Label>
+            <Input value={creditTerm.id} disabled className="font-mono" />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" value={creditTerm.name} disabled />
             </div>
-            <div>
-              <label className="text-sm font-medium text-muted-foreground">Payment Days</label>
-              <p className="text-sm font-medium">{creditTerm.days} days</p>
+
+            <div className="space-y-2">
+              <Label htmlFor="days">Payment Days</Label>
+              <Input id="days" value={`${creditTerm.days} days`} disabled />
             </div>
-             <div>
-              <label className="text-sm font-medium text-muted-foreground">Status</label>
-              <p className="text-sm font-medium">{creditTerm.status} </p>
-            </div>
-           
           </div>
 
           {creditTerm.description && (
-            <>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">Description</label>
-                <p className="text-sm mt-1">{creditTerm.description}</p>
-              </div>
-            </>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                value={creditTerm.description}
+                rows={3}
+                disabled
+              />
+            </div>
           )}
 
-
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="flex items-center space-x-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Created</label>
-                  <p className="text-sm">{new Date(creditTerm.createdAt).toLocaleString()}</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Clock className="h-4 w-4 text-muted-foreground" />
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Last Updated</label>
-                  <p className="text-sm">{new Date(creditTerm.updatedAt).toLocaleString()}</p>
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-muted-foreground">ID</label>
-                <p className="text-sm font-mono">{creditTerm.id}</p>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label>Created</Label>
+              <Input
+                value={new Date(creditTerm.createdAt).toLocaleString()}
+                disabled
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Last Updated</Label>
+              <Input
+                value={new Date(creditTerm.updatedAt).toLocaleString()}
+                disabled
+              />
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

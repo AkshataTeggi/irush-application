@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react"
 import { CreditTermHeader } from "@/components/credit-term/credit-term-header"
-import { CreditTermTabs } from "@/components/credit-term/credit-term-tabs"
 import { CreditTermLoading } from "@/components/credit-term/credit-term-loading"
 import { CreditTermError } from "@/components/credit-term/credit-term-error"
 import { fetchCreditTerms } from "@/lib/credit-term"
 import type { CreditTerm } from "@/types/credit-term"
+import { CreditTermList } from "@/components/credit-term/credit-term-list"
 
-export default function CreditTermsPage() {
+export default function CreditTermsPage(onRefresh: () => void) {
   const [creditTerms, setCreditTerms] = useState<CreditTerm[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -39,10 +39,18 @@ export default function CreditTermsPage() {
     return <CreditTermError message={error} onRetry={loadCreditTerms} />
   }
 
+  if(!creditTerms||creditTerms.length===0){
+    return(
+      <p>
+        No credit Terms found
+      </p>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <CreditTermHeader />
-      <CreditTermTabs creditTerms={creditTerms} onRefresh={loadCreditTerms} />
+       <CreditTermList creditTerms={creditTerms} onRefresh={onRefresh} />
     </div>
   )
 }

@@ -142,11 +142,8 @@ export function DepartmentCreateForm({ onSuccess, onCancel, showCard = true }: D
   if (showCard) {
     return (
       <Card >
-        <CardHeader>
-          <CardTitle>Department Information</CardTitle>
-          <CardDescription>Create a new department by filling out the form below.</CardDescription>
-        </CardHeader>
-        <CardContent>{formContent}</CardContent>
+       
+        <CardContent className="mt-5">{formContent}</CardContent>
       </Card>
     )
   }

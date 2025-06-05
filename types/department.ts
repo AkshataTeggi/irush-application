@@ -1,5 +1,7 @@
 // Department Types
 export interface Role {
+  permissions: boolean
+  departmentName: string
   id: string
   name: string
   description: string

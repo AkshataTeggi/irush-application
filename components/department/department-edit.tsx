@@ -71,7 +71,7 @@ export function DepartmentEdit({ department, onBack, onUpdate }: DepartmentEditP
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Edit Department</h1>
+        <h1 className="text-2xl font-bold">Edit Department</h1>
         <Button variant="outline" onClick={onBack}>
           Cancel
         </Button>
@@ -79,11 +79,8 @@ export function DepartmentEdit({ department, onBack, onUpdate }: DepartmentEditP
 
       <Card>
         <form onSubmit={handleSubmit}>
-          <CardHeader>
-            <CardTitle>Department Information</CardTitle>
-            <CardDescription>Update the department details below</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      
+          <CardContent className="space-y-4 mt-5">
             {error && (
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />

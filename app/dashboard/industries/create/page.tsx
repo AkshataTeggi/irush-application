@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { IndustryCreateForm } from "@/components/industry/industry-create-form"
+import { ArrowLeft } from "lucide-react"
 
 export const metadata = {
   title: "Create Industry | iRUSH",
@@ -13,10 +14,11 @@ export default function CreateIndustryPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Create Industry</h1>
-          <p className="text-muted-foreground">Add a new industry type to the system</p>
         </div>
         <Button variant="outline" asChild>
-          <Link href="/dashboard/industries">Back to Industries</Link>
+          <Link href="/dashboard/industries">
+           <ArrowLeft className="mr-2 h-4 w-4" />
+           Back </Link>
         </Button>
       </div>
       <div className="border rounded-md p-6">

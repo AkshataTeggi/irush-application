@@ -69,7 +69,7 @@ export function DepartmentList({ departments, onViewRoles, onEdit, onDelete }: D
                     <Button
                       variant="outline"
                       size="sm"
-                      className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                   
                       onClick={() => onDelete(department)}
                     >
                       Delete

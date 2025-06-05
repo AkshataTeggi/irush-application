@@ -13,6 +13,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { updateIndustry } from "@/lib/industry"
 import { useToast } from "@/hooks/use-toast"
 import type { Industry } from "@/types/industry"
+import { Card, CardContent } from "../ui/card"
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -67,12 +68,15 @@ export function IndustryEdit({ industry, onBack }: IndustryEditProps) {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Edit Industry</h1>
-          <p className="text-muted-foreground">Update industry information</p>
         </div>
         <Button variant="outline" onClick={onBack}>
           Back to Details
         </Button>
       </div>
+
+
+       <Card>
+  <CardContent className="space-y-6 mt-5">
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -85,7 +89,6 @@ export function IndustryEdit({ industry, onBack }: IndustryEditProps) {
                 <FormControl>
                   <Input placeholder="Enter industry name" {...field} />
                 </FormControl>
-                <FormDescription>The name of the industry.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -99,7 +102,6 @@ export function IndustryEdit({ industry, onBack }: IndustryEditProps) {
                 <FormControl>
                   <Textarea placeholder="Enter industry description (optional)" {...field} value={field.value || ""} />
                 </FormControl>
-                <FormDescription>A brief description of the industry.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -140,6 +142,8 @@ export function IndustryEdit({ industry, onBack }: IndustryEditProps) {
           </div>
         </form>
       </Form>
+      </CardContent>
+      </Card>
     </div>
   )
 }

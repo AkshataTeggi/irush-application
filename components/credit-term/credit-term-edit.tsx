@@ -152,7 +152,7 @@ export function CreditTermEdit({ creditTerm, onBack, onUpdate }: CreditTermEditP
               />
             </div>
 
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <Switch
                 id="isActive"
                 checked={isActive}
@@ -160,7 +160,7 @@ export function CreditTermEdit({ creditTerm, onBack, onUpdate }: CreditTermEditP
                 disabled={isSubmitting || success}
               />
               <Label htmlFor="isActive">Active</Label>
-            </div>
+            </div> */}
 
             <Separator />
 

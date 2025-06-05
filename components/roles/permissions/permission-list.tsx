@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Eye, Edit, Trash2 } from "lucide-react";
+import { Trash2, Edit, Eye } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -12,8 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,32 +25,33 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { deleteTax } from "@/lib/tax";
-import { useToast } from "@/hooks/use-toast";
-import { Tax } from "@/types/ṭax";
 
-interface TaxListProps {
-  taxes: Tax[];
+import { useToast } from "@/hooks/use-toast";
+import { deletePermission } from "@/lib/roles";  // Your API helper
+import { Permission } from "@/types/role";
+
+interface PermissionListProps {
+  permissions: Permission[];
   onRefresh: () => void;
 }
 
-export function TaxList({ taxes, onRefresh }: TaxListProps) {
+export function PermissionList({ permissions = [], onRefresh }: PermissionListProps) {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const handleDelete = async (id: string) => {
     try {
       setDeletingId(id);
-      await deleteTax(id);
+      await deletePermission(id);
       toast({
         title: "Success",
-        description: "Tax deleted successfully",
+        description: "Permission deleted successfully",
       });
       onRefresh();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete tax",
+        description: "Failed to delete permission",
         variant: "destructive",
       });
     } finally {
@@ -58,13 +59,13 @@ export function TaxList({ taxes, onRefresh }: TaxListProps) {
     }
   };
 
-  if (taxes.length === 0) {
+  if (permissions.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-16">
-          <p className="text-muted-foreground text-lg mb-4">No taxes found</p>
+          <p className="text-muted-foreground text-lg mb-4">No permissions found</p>
           <Button asChild>
-            <Link href="/dashboard/tax/create">Create your first tax</Link>
+            <Link href="/dashboard/permissions/create">Create your first permission</Link>
           </Button>
         </CardContent>
       </Card>
@@ -78,41 +79,25 @@ export function TaxList({ taxes, onRefresh }: TaxListProps) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Rate (%)</TableHead>
-              <TableHead>Country</TableHead>
-              <TableHead>City</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>Description</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {taxes.map((tax) => (
-              <TableRow key={tax.id}>
-                <TableCell className="font-medium">{tax.name}</TableCell>
-                <TableCell>{tax.rate}%</TableCell>
-                <TableCell>{tax.country || "-"}</TableCell>
-                <TableCell>{tax.city || "-"}</TableCell>
-                <TableCell>{tax.isActive ? "Active" : "Inactive"}</TableCell>
+            {permissions.map((permission) => (
+              <TableRow key={permission.id}>
+                <TableCell className="font-medium">{permission.name}</TableCell>
+                <TableCell>{permission.description || "-"}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/tax/${tax.id}`}>
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
-                      </Link>
-                    </Button>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/dashboard/tax/${tax.id}/edit`}>
-                        <Edit className="h-4 w-4 mr-1" />
-                        Edit
-                      </Link>
-                    </Button>
+                    
+                    
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
                           variant="outline"
                           size="sm"
-                          disabled={deletingId === tax.id}
+                          disabled={deletingId === permission.id}
                         >
                           <Trash2 className="h-4 w-4 mr-1" />
                           Delete
@@ -120,16 +105,15 @@ export function TaxList({ taxes, onRefresh }: TaxListProps) {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Tax</AlertDialogTitle>
+                          <AlertDialogTitle>Delete Permission</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete "{tax.name}"? This
-                            action cannot be undone.
+                            Are you sure you want to delete "{permission.name}"? This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
-                            onClick={() => handleDelete(tax.id)}
+                            onClick={() => handleDelete(permission.id)}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
                             Delete

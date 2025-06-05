@@ -76,7 +76,6 @@ export function IndustryCreateForm({ onSuccess }: IndustryCreateFormProps) {
               <FormControl>
                 <Input placeholder="Enter industry name" {...field} />
               </FormControl>
-              <FormDescription>The name of the industry.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -90,7 +89,6 @@ export function IndustryCreateForm({ onSuccess }: IndustryCreateFormProps) {
               <FormControl>
                 <Textarea placeholder="Enter industry description (optional)" {...field} value={field.value || ""} />
               </FormControl>
-              <FormDescription>A brief description of the industry.</FormDescription>
               <FormMessage />
             </FormItem>
           )}

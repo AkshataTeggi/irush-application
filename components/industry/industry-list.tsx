@@ -50,7 +50,7 @@ export function IndustryList({ industries }: IndustryListProps) {
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -70,7 +70,7 @@ export function IndustryList({ industries }: IndustryListProps) {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge variant={industry.status === "active" ? "default" : "secondary"}>{industry.status}</Badge>
+                  {industry.status}
                 </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button variant="outline" size="sm" asChild>

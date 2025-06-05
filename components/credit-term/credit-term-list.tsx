@@ -64,9 +64,8 @@ export function CreditTermList({ creditTerms, onRefresh }: CreditTermListProps) 
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
                 <TableHead>Days</TableHead>
-                <TableHead>Status</TableHead>
                 <TableHead>Created</TableHead>
-                <TableHead className="w-[200px]">Actions</TableHead>
+                <TableHead >Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -86,34 +85,30 @@ export function CreditTermList({ creditTerms, onRefresh }: CreditTermListProps) 
                     </TableCell>
                     <TableCell className="text-muted-foreground">{term.description || "—"}</TableCell>
                     <TableCell>{term.days} days</TableCell>
-                    <TableCell>
-                    
-                        {term.isActive ? "Active" : "Inactive"}
-                      
-                    </TableCell>
+                   
                     <TableCell className="text-muted-foreground">
                       {new Date(term.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm" asChild>
+                        <Button variant="outline" size="sm" asChild>
                           <Link href={`/dashboard/credit-terms/${term.id}`}>
                             <Eye className="mr-1 h-4 w-4" />
                             View
                           </Link>
                         </Button>
-                        <Button variant="ghost" size="sm" asChild>
+                        <Button variant="outline" size="sm" asChild>
                           <Link href={`/dashboard/credit-terms/${term.id}/edit`}>
                             <Edit className="mr-1 h-4 w-4" />
                             Edit
                           </Link>
                         </Button>
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           onClick={() => handleDelete(term.id, term.name)}
                           disabled={isDeleting === term.id}
-                          className="text-destructive hover:text-destructive"
+                          
                         >
                           <Trash2 className="mr-1 h-4 w-4" />
                           {isDeleting === term.id ? "Deleting..." : "Delete"}
