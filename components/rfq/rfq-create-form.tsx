@@ -24,7 +24,7 @@
 // import { SpecificationsSection } from "@/components/rfq/form-sections/specifications-section"
 // import { FileUploadSection } from "@/components/rfq/form-sections/file-upload-section"
 // import { SuccessState } from "@/components/rfq/form-sections/success-state"
-// import { createRFQ } from "@/lib/rfq"
+// import { createRFQ, uploadAndProcessExcelFile } from "@/lib/rfq"
 
 // interface RFQCreateFormProps {
 //   onSuccess?: () => void
@@ -392,7 +392,7 @@
 
 //         // Process Excel file using your RFQ controller's upload-excel endpoint
 //         // This will call your processExcelAndSave method
-//         const extractedData = await uploadExcelFile(rfqId, excelFile.file)
+//         const extractedData = await uploadAndProcessExcelFile(rfqId, excelFile.file)
 
 //         console.log(`✅ Excel processing completed for: ${excelFile.file.name}`, extractedData)
 
@@ -713,6 +713,7 @@
 //             </Alert>
 //           )}
 
+//           {/* Success Alert */}
 //           {success && (
 //             <Alert className="bg-green-50 border-green-500 text-green-700 dark:bg-green-900/20 dark:border-green-700 dark:text-green-400">
 //               <CheckCircle className="h-4 w-4" />
@@ -828,6 +829,11 @@
 
 
 
+
+
+
+
+
 "use client"
 import { useState, useEffect } from "react"
 import type React from "react"
@@ -852,7 +858,9 @@ import { ServicesSection } from "@/components/rfq/form-sections/services-section
 import { SpecificationsSection } from "@/components/rfq/form-sections/specifications-section"
 import { FileUploadSection } from "@/components/rfq/form-sections/file-upload-section"
 import { SuccessState } from "@/components/rfq/form-sections/success-state"
-import { createRFQ, uploadAndProcessExcelFile } from "@/lib/rfq"
+import { createRFQ } from "@/lib/rfq"
+
+const API_BASE_URL = "http://irush-server.rushpcb.com:5000"
 
 interface RFQCreateFormProps {
   onSuccess?: () => void
@@ -870,7 +878,7 @@ interface UploadingFile {
   file: File
   id: string
   progress: number
-  status: "pending" | "uploading" | "completed" | "error" | "processing" | "extracted"
+  status: "pending" | "uploading" | "completed" | "error" | "processing"
   error?: string
   uploadedBytes: number
   serverData?: {
@@ -879,12 +887,9 @@ interface UploadingFile {
     originalname: string
     size: number
     mimetype: string
-  }
-  extractedData?: {
-    specifications: any[]
-    assemblyData: any[]
-    images: any[]
-    totalSpecs: number
+    extractedSpecs?: any[]
+    extractedAssembly?: any[]
+    extractedImages?: any[]
   }
 }
 
@@ -894,6 +899,9 @@ interface RFQFile {
   originalname: string
   size: number
   mimetype: string
+  extractedSpecs?: any[]
+  extractedAssembly?: any[]
+  extractedImages?: any[]
 }
 
 export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreateFormProps) {
@@ -1048,11 +1056,24 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
     return excelTypes.includes(file.type) || excelExtensions.includes(fileExtension)
   }
 
-  // Upload single file with immediate Excel processing for Excel files
+  // Update the uploadSingleFile function to match the UploadService implementation
   const uploadSingleFile = async (uploadingFile: UploadingFile): Promise<RFQFile> => {
     const { file, id } = uploadingFile
 
     return new Promise((resolve, reject) => {
+      const formData = new FormData()
+      formData.append("files", file)
+
+      // Add metadata to help backend process the file
+      // Note: For new RFQs, we don't have an RFQ ID yet, so we'll associate files after RFQ creation
+      const metadata = {
+        modelType: "RFQ",
+        isExcel: isExcelFile(file),
+      }
+      formData.append("metadata", JSON.stringify(metadata))
+
+      const xhr = new XMLHttpRequest()
+
       console.log(`🚀 Starting upload for: ${file.name}`)
 
       // Update status to uploading
@@ -1060,31 +1081,11 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
         prev.map((f) => (f.id === id ? { ...f, status: "uploading", progress: 0, uploadedBytes: 0 } : f)),
       )
 
-      // Check if it's an Excel file
-      if (isExcelFile(file)) {
-        // For Excel files, we'll upload and then immediately process
-        uploadExcelFileWithProcessing(uploadingFile).then(resolve).catch(reject)
-      } else {
-        // For regular files, use normal upload
-        uploadRegularFile(uploadingFile).then(resolve).catch(reject)
-      }
-    })
-  }
-
-  // Upload regular (non-Excel) files
-  const uploadRegularFile = async (uploadingFile: UploadingFile): Promise<RFQFile> => {
-    const { file, id } = uploadingFile
-
-    return new Promise((resolve, reject) => {
-      const formData = new FormData()
-      formData.append("files", file)
-
-      const xhr = new XMLHttpRequest()
-
       // Track upload progress
       xhr.upload.addEventListener("progress", (event) => {
         if (event.lengthComputable) {
           const progress = Math.round((event.loaded / event.total) * 100)
+
           setUploadingFiles((prev) =>
             prev.map((f) => (f.id === id ? { ...f, progress, uploadedBytes: event.loaded } : f)),
           )
@@ -1092,11 +1093,18 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
       })
 
       // Handle successful upload
-      xhr.addEventListener("load", () => {
+      xhr.addEventListener("load", async () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           try {
             const response = JSON.parse(xhr.responseText)
-            const fileData = Array.isArray(response) ? response[0] : response
+
+            // Handle your controller's response format (array of files)
+            let fileData
+            if (Array.isArray(response)) {
+              fileData = response[0] // Get first file from array
+            } else {
+              fileData = response
+            }
 
             const serverData = {
               id: fileData?.id || id,
@@ -1104,6 +1112,8 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
               originalname: fileData?.originalname || file.name,
               size: fileData?.size || file.size,
               mimetype: fileData?.mimetype || file.type,
+              path: fileData?.path,
+              modelType: fileData?.modelType || "RFQ",
             }
 
             setUploadingFiles((prev) =>
@@ -1111,18 +1121,28 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
             )
 
             console.log(`✅ Upload completed for: ${file.name}`)
+
+            // If it's an Excel file, we'll process it after RFQ creation
+            if (isExcelFile(file)) {
+              console.log(`📊 Excel file detected: ${file.name} - Will be processed after RFQ creation`)
+            }
+
             resolve(fileData)
           } catch (error) {
-            const errorMessage = "Invalid server response"
+            console.error(`❌ Error parsing response for ${file.name}:`, error)
             setUploadingFiles((prev) =>
-              prev.map((f) => (f.id === id ? { ...f, status: "error", error: errorMessage } : f)),
+              prev.map((f) => (f.id === id ? { ...f, status: "error", error: "Invalid server response" } : f)),
             )
-            reject(new Error(errorMessage))
+            reject(new Error("Invalid server response"))
           }
         } else {
           let errorMessage = `Upload failed: ${xhr.status}`
-          if (xhr.status === 413) errorMessage = "File too large (max 1GB)"
-          else if (xhr.status === 400) errorMessage = "Invalid file type"
+
+          if (xhr.status === 413) {
+            errorMessage = "File too large (max 1GB)"
+          } else if (xhr.status === 400) {
+            errorMessage = "Invalid file type"
+          }
 
           setUploadingFiles((prev) =>
             prev.map((f) => (f.id === id ? { ...f, status: "error", error: errorMessage } : f)),
@@ -1131,177 +1151,17 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
         }
       })
 
+      // Handle upload errors
       xhr.addEventListener("error", () => {
         const errorMessage = "Network error occurred"
         setUploadingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, status: "error", error: errorMessage } : f)))
         reject(new Error(errorMessage))
       })
 
-      xhr.timeout = 5 * 60 * 1000
-      xhr.addEventListener("timeout", () => {
-        const errorMessage = "Upload timeout"
-        setUploadingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, status: "error", error: errorMessage } : f)))
-        reject(new Error(errorMessage))
-      })
-
-      xhr.open("POST", "http://irush-server.rushpcb.com:5000/upload")
+      // Start upload to your upload controller
+      xhr.open("POST", `${API_BASE_URL}/upload`)
       xhr.send(formData)
     })
-  }
-
-  // Upload Excel files and process them immediately (requires RFQ ID)
-  const uploadExcelFileWithProcessing = async (uploadingFile: UploadingFile): Promise<RFQFile> => {
-    const { file, id } = uploadingFile
-
-    try {
-      // First, upload the file normally
-      setUploadingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, status: "uploading", progress: 50 } : f)))
-
-      const formData = new FormData()
-      formData.append("files", file)
-
-      const uploadResponse = await fetch("http://irush-server.rushpcb.com:5000/upload", {
-        method: "POST",
-        body: formData,
-      })
-
-      if (!uploadResponse.ok) {
-        throw new Error(`Upload failed: ${uploadResponse.status}`)
-      }
-
-      const uploadResult = await uploadResponse.json()
-      const fileData = Array.isArray(uploadResult) ? uploadResult[0] : uploadResult
-
-      const serverData = {
-        id: fileData?.id || id,
-        filename: fileData?.filename || file.name,
-        originalname: fileData?.originalname || file.name,
-        size: fileData?.size || file.size,
-        mimetype: fileData?.mimetype || file.type,
-      }
-
-      // Mark as uploaded but not yet processed
-      setUploadingFiles((prev) =>
-        prev.map((f) => (f.id === id ? { ...f, status: "completed", progress: 100, serverData } : f)),
-      )
-
-      console.log(`✅ Excel file uploaded: ${file.name} - Ready for processing after RFQ creation`)
-
-      return fileData
-    } catch (error) {
-      console.error(`❌ Excel upload failed for ${file.name}:`, error)
-
-      let errorMessage = "Excel upload failed"
-      if (error instanceof Error) {
-        errorMessage = error.message
-      }
-
-      setUploadingFiles((prev) => prev.map((f) => (f.id === id ? { ...f, status: "error", error: errorMessage } : f)))
-      throw error
-    }
-  }
-
-  // Process Excel files immediately after RFQ creation using your backend endpoint
-  const processExcelFilesAfterRfqCreation = async (rfqId: string) => {
-    const excelFiles = uploadingFiles.filter((f) => f.status === "completed" && isExcelFile(f.file))
-
-    if (excelFiles.length === 0) {
-      return
-    }
-
-    console.log(`🔄 Processing ${excelFiles.length} Excel files for RFQ: ${rfqId}`)
-
-    for (const excelFile of excelFiles) {
-      try {
-        console.log(`📊 Processing Excel file: ${excelFile.file.name} for RFQ: ${rfqId}`)
-
-        // Update status to processing
-        setUploadingFiles((prev) => prev.map((f) => (f.id === excelFile.id ? { ...f, status: "processing" } : f)))
-
-        // Process Excel file using your RFQ controller's upload-excel endpoint
-        // This will call your processExcelAndSave method
-        const extractedData = await uploadAndProcessExcelFile(rfqId, excelFile.file)
-
-        console.log(`✅ Excel processing completed for: ${excelFile.file.name}`, extractedData)
-
-        // Update file with extracted data
-        setUploadingFiles((prev) =>
-          prev.map((f) =>
-            f.id === excelFile.id
-              ? {
-                  ...f,
-                  status: "extracted",
-                  extractedData: {
-                    specifications: extractedData.extractedSpecs || [],
-                    assemblyData: extractedData.extractedAssembly || [],
-                    images: extractedData.extractedImages || [],
-                    totalSpecs: extractedData.extractedSpecs?.length || 0,
-                  },
-                }
-              : f,
-          ),
-        )
-
-        // Auto-populate extracted specifications into the form
-        if (extractedData.extractedSpecs && extractedData.extractedSpecs.length > 0) {
-          const newExtractedSpecs: SpecificationValue[] = extractedData.extractedSpecs
-            .map((spec: any) => {
-              // Find matching specification in the available specifications
-              const matchingSpec = specifications.find(
-                (s) =>
-                  s.name.toLowerCase() === spec.key?.toLowerCase() ||
-                  s.xlName?.toLowerCase() === spec.key?.toLowerCase(),
-              )
-
-              if (matchingSpec) {
-                return {
-                  specificationId: matchingSpec.id,
-                  value: String(spec.value || ""),
-                  unit: spec.unit,
-                }
-              }
-              return null
-            })
-            .filter(Boolean) as SpecificationValue[]
-
-          // Add extracted specifications to the form
-          setExtractedSpecifications((prev) => [...prev, ...newExtractedSpecs])
-
-          // Merge with existing specification values
-          setSpecificationValues((prev) => {
-            const merged = [...prev]
-            newExtractedSpecs.forEach((newSpec) => {
-              const existingIndex = merged.findIndex((spec) => spec.specificationId === newSpec.specificationId)
-              if (existingIndex >= 0) {
-                // Update existing specification
-                merged[existingIndex] = newSpec
-              } else {
-                // Add new specification
-                merged.push(newSpec)
-              }
-            })
-            return merged
-          })
-
-          console.log(`📋 Auto-populated ${newExtractedSpecs.length} specifications from Excel`)
-        }
-      } catch (error) {
-        console.error(`❌ Failed to process Excel file ${excelFile.file.name}:`, error)
-
-        // Update status to error
-        setUploadingFiles((prev) =>
-          prev.map((f) =>
-            f.id === excelFile.id
-              ? {
-                  ...f,
-                  status: "error",
-                  error: `Excel processing failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-                }
-              : f,
-          ),
-        )
-      }
-    }
   }
 
   // Handle manual file upload
@@ -1351,7 +1211,7 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
     return valid
   }
 
-  // Handle form submission
+  // Update the handleSubmit function to update file associations after RFQ creation
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -1392,7 +1252,7 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
         }
       }
 
-      // Get uploaded file IDs (excluding Excel files that will be processed separately)
+      // Get uploaded file IDs
       const completedFiles = uploadingFiles.filter((f) => f.status === "completed" && f.serverData)
       const fileIds = completedFiles.map((f) => ({ id: f.serverData!.id }))
 
@@ -1435,8 +1295,22 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
       const createdRFQ = await createRFQ(rfqData)
       console.log("✅ RFQ created successfully:", createdRFQ)
 
-      // Process Excel files immediately after RFQ creation
-      await processExcelFilesAfterRfqCreation(createdRFQ.id)
+      // Update file associations with the new RFQ ID if needed
+      if (completedFiles.length > 0 && createdRFQ.id) {
+        console.log(`🔄 Updating file associations for RFQ ID: ${createdRFQ.id}`)
+
+        // For each file, update the filename to include the RFQ ID
+        for (const file of completedFiles) {
+          try {
+            await fetch(`${API_BASE_URL}/upload/update-filename/${file.serverData!.id}/${createdRFQ.id}`, {
+              method: "PUT",
+            })
+          } catch (error) {
+            console.warn(`⚠️ Failed to update filename for file ${file.serverData!.id}:`, error)
+            // Non-critical error, continue with other files
+          }
+        }
+      }
 
       setSuccess(true)
       setIsSubmitted(true)
@@ -1638,5 +1512,4 @@ export function RFQCreateForm({ onSuccess, onCancel, showCard = true }: RFQCreat
 
   return <div className="space-y-4">{content}</div>
 }
-
 
