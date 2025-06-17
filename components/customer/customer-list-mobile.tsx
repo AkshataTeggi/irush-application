@@ -44,10 +44,12 @@ export function CustomerListMobile({ customers, onView, onEdit, onDelete }: Cust
               className={`text-sm px-2 py-1 rounded ${
                 customer.status === "active"
                   ? "bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400"
-                  : "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400"
+                  : customer.status === "prospect"
+                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400"
+                    : "bg-gray-100 text-gray-700 dark:bg-gray-900/20 dark:text-gray-400"
               }`}
             >
-              {customer.status === "active" ? "Active" : "Inactive"}
+              {customer.status === "active" ? "Active" : customer.status === "prospect" ? "Prospect" : "Inactive"}
             </span>
           </div>
 
@@ -85,6 +87,7 @@ export function CustomerListMobile({ customers, onView, onEdit, onDelete }: Cust
                 <div>
                   {customer.city}, {customer.state} {customer.zipCode}
                 </div>
+                {customer.county && <div>{customer.county}</div>}
                 <div>{customer.country}</div>
               </div>
             </div>
@@ -113,7 +116,7 @@ export function CustomerListMobile({ customers, onView, onEdit, onDelete }: Cust
             <div className="flex items-center text-sm text-muted-foreground">
               <Receipt className="mr-2 h-4 w-4" />
               <span>
-                <span className="font-medium">Tax:</span> {customer.tax.name}
+                <span className="font-medium">Tax:</span> {customer.tax.rate}%
               </span>
             </div>
           </div>
@@ -132,6 +135,46 @@ export function CustomerListMobile({ customers, onView, onEdit, onDelete }: Cust
               <span className="font-mono">ID: {customer.id}</span>
             </div>
           </div>
+
+          {/* Customer Addresses */}
+          {customer.customerAddress && customer.customerAddress.length > 0 && (
+            <div className="space-y-2 mb-4">
+              <h4 className="text-sm font-semibold">Additional Addresses</h4>
+              {customer.customerAddress.map((address) => (
+                <div
+                  key={address.id}
+                  className="text-xs text-muted-foreground border-l-2 border-gray-200 dark:border-gray-700 pl-2"
+                >
+                  <div className="font-medium">
+                    {address.type} {address.isPrimary && "(Primary)"}
+                  </div>
+                  <div>{address.address}</div>
+                  <div>
+                    {address.city}, {address.state} {address.zipCode}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Customer Contacts */}
+          {customer.contacts && customer.contacts.length > 0 && (
+            <div className="space-y-2 mb-4">
+              <h4 className="text-sm font-semibold">Contacts</h4>
+              {customer.contacts.map((contact) => (
+                <div
+                  key={contact.id}
+                  className="text-xs text-muted-foreground border-l-2 border-blue-200 dark:border-blue-700 pl-2"
+                >
+                  <div className="font-medium">
+                    {contact.name} {contact.isPrimary && "(Primary)"}
+                  </div>
+                  <div>{contact.position}</div>
+                  <div>{contact.phone}</div>
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-2">

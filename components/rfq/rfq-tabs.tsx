@@ -99,8 +99,8 @@
 
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { RFQList } from "@/components/rfq/rfq-list"
 import type { RFQ } from "@/types/rfq"
+import { RFQList } from "./rfq-list"
 
 interface RFQTabsProps {
   activeTab: string

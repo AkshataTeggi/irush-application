@@ -1,14 +1,28 @@
+"use client"
+
+import { AlertCircle, RefreshCw } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+
 interface CustomerErrorProps {
   error: string
+  onRetry?: () => void
 }
 
-export function CustomerError({ error }: CustomerErrorProps) {
+export function CustomerError({ error, onRetry }: CustomerErrorProps) {
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Customers</h1>
-      <div className="flex items-center justify-center h-64">
-        <p className="text-red-500">{error}</p>
+    <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+      <AlertCircle className="h-12 w-12 text-red-500" />
+      <div className="text-center space-y-2">
+        <h3 className="text-lg font-semibold text-gray-900">Something went wrong</h3>
+        <p className="text-sm text-gray-600 max-w-md">{error}</p>
       </div>
+      {onRetry && (
+        <Button onClick={onRetry} variant="outline">
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Try Again
+        </Button>
+      )}
     </div>
   )
 }

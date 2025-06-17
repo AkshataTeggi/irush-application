@@ -1,7 +1,7 @@
 import type { CreditTerm, CreateCreditTermDto, UpdateCreditTermDto, CreditTermSearchParams } from "@/types/credit-term"
+import { API_BASE_URL } from "./constants"
 
 // API configuration
-const API_BASE_URL = "http://irush-server.rushpcb.com:5000"
 const API_ENDPOINTS = {
   creditTerms: "/credit-terms",
 }

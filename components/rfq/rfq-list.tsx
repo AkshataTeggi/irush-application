@@ -526,42 +526,15 @@ export function RFQList({ rfqs, onView, onEdit, onDelete }: RFQListProps) {
             <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted dark:border-slate-700">
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-24">RFQ ID</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-40">Title</th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-48">Description</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">Status</th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-24">Quantity</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">Customer ID</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-40">Customer Name</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-48">
                 Customer Email
               </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-32">
-                Customer Phone
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-48">
-                Customer Address
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-32">Customer City</th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-32">
-                Customer State
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">
-                Customer Zip Code
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">
-                Customer Country
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-40">
-                Customer Website
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">
-                Customer Status
-              </th>
+             
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">Salesman ID</th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">
-                Credit Term ID
-              </th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">Tax ID</th>
-              <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-28">Industry ID</th>
+             
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-40">Files</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-40">Services</th>
               <th className="h-12 px-3 text-left align-middle font-medium text-muted-foreground w-40">RFQ Assembly</th>
@@ -597,22 +570,12 @@ export function RFQList({ rfqs, onView, onEdit, onDelete }: RFQListProps) {
                   </div>
                 </td>
 
-                {/* Description */}
-                <td className="p-3 align-middle">
-                  <div className="block overflow-hidden text-ellipsis whitespace-nowrap" title={rfq.description}>
-                    {rfq.description}
-                  </div>
-                </td>
-
                 {/* Status */}
                 <td className="p-3 align-middle">
                   <RFQStatusBadge status={rfq.status} />
                 </td>
 
-                {/* Quantity */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap">{rfq.quantity}</span>
-                </td>
+              
 
                 {/* Customer ID */}
                 <td className="p-3 align-middle">
@@ -635,64 +598,6 @@ export function RFQList({ rfqs, onView, onEdit, onDelete }: RFQListProps) {
                   </span>
                 </td>
 
-                {/* Customer Phone */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap">{rfq.customer.phone}</span>
-                </td>
-
-                {/* Customer Address */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap" title={rfq.customer.address}>
-                    {rfq.customer.address}
-                  </span>
-                </td>
-
-                {/* Customer City */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap">{rfq.customer.city}</span>
-                </td>
-
-                {/* Customer State */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap">{rfq.customer.state}</span>
-                </td>
-
-                {/* Customer Zip Code */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap">{rfq.customer.zipCode}</span>
-                </td>
-
-                {/* Customer Country */}
-                <td className="p-3 align-middle">
-                  <span className="block overflow-hidden text-ellipsis whitespace-nowrap">{rfq.customer.country}</span>
-                </td>
-
-                {/* Customer Website */}
-                <td className="p-3 align-middle">
-                  {rfq.customer.website ? (
-                    <span
-                      className="block overflow-hidden text-ellipsis whitespace-nowrap"
-                      title={rfq.customer.website}
-                    >
-                      {rfq.customer.website.replace(/^https?:\/\//, "")}
-                    </span>
-                  ) : (
-                    <span className="block overflow-hidden text-ellipsis whitespace-nowrap">No website</span>
-                  )}
-                </td>
-
-                {/* Customer Status */}
-                <td className="p-3 align-middle">
-                  <div
-                    className={`inline-flex items-center px-2 py-1 rounded-full ${
-                      rfq.customer.status === "active"
-                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
-                    }`}
-                  >
-                    {rfq.customer.status}
-                  </div>
-                </td>
 
                 {/* Salesman ID */}
                 <td className="p-3 align-middle">
@@ -708,44 +613,9 @@ export function RFQList({ rfqs, onView, onEdit, onDelete }: RFQListProps) {
                   )}
                 </td>
 
-                {/* Credit Term ID */}
-                <td className="p-3 align-middle">
-                  {rfq.customer.creditTermId ? (
-                    <span
-                      className="block overflow-hidden text-ellipsis whitespace-nowrap"
-                      title={rfq.customer.creditTermId}
-                    >
-                      {rfq.customer.creditTermId.slice(-8)}
-                    </span>
-                  ) : (
-                    <span className="block overflow-hidden text-ellipsis whitespace-nowrap">No credit term</span>
-                  )}
-                </td>
 
-                {/* Tax ID */}
-                <td className="p-3 align-middle">
-                  {rfq.customer.taxId ? (
-                    <span className="block overflow-hidden text-ellipsis whitespace-nowrap" title={rfq.customer.taxId}>
-                      {rfq.customer.taxId.slice(-8)}
-                    </span>
-                  ) : (
-                    <span className="block overflow-hidden text-ellipsis whitespace-nowrap">No tax ID</span>
-                  )}
-                </td>
 
-                {/* Industry ID */}
-                <td className="p-3 align-middle">
-                  {rfq.customer.industryId ? (
-                    <span
-                      className="block overflow-hidden text-ellipsis whitespace-nowrap"
-                      title={rfq.customer.industryId}
-                    >
-                      {rfq.customer.industryId.slice(-8)}
-                    </span>
-                  ) : (
-                    <span className="block overflow-hidden text-ellipsis whitespace-nowrap">No industry</span>
-                  )}
-                </td>
+               
 
                 {/* Files */}
                 <td className="p-3 align-middle">

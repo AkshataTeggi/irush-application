@@ -84,9 +84,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, Loader2 } from "lucide-react"
 import type { RFQ } from "@/types/rfq"
 import { RFQDetailWithImport } from "@/components/rfq/rfq-detail"
+import { API_BASE_URL } from "@/lib/constants"
 
 // Base URL for API calls
-const API_BASE_URL = "http://irush-server.rushpcb.com:5000"
 
 export default function RFQDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter()

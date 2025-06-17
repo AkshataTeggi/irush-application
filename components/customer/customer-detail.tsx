@@ -86,6 +86,12 @@ export function CustomerDetail({ customer, onBack, onEdit }: CustomerDetailProps
                 <h4 className="text-sm font-medium">Address</h4>
                 <p className="text-sm text-muted-foreground">{customer.address}</p>
               </div>
+              {customer.county && (
+                <div>
+                  <h4 className="text-sm font-medium">County</h4>
+                  <p className="text-sm text-muted-foreground">{customer.county}</p>
+                </div>
+              )}
               <div>
                 <h4 className="text-sm font-medium">City</h4>
                 <p className="text-sm text-muted-foreground">{customer.city}</p>
@@ -125,10 +131,87 @@ export function CustomerDetail({ customer, onBack, onEdit }: CustomerDetailProps
               </div>
               <div>
                 <h4 className="text-sm font-medium">Tax</h4>
-                <p className="text-sm text-muted-foreground">{customer.tax.name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {customer.tax.name ? `${customer.tax.name} (${customer.tax.rate}%)` : `${customer.tax.rate}%`}
+                </p>
               </div>
             </div>
           </div>
+
+          {customer.customerAddress && customer.customerAddress.length > 0 && (
+            <>
+              <Separator className="dark:bg-slate-700" />
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Customer Addresses</h3>
+                <div className="space-y-4">
+                  {customer.customerAddress.map((address) => (
+                    <div key={address.id} className="border rounded-lg p-4 dark:border-slate-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">
+                          {address.type} Address
+                          {address.isPrimary && (
+                            <span className="ml-2 text-xs bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 px-2 py-1 rounded">
+                              Primary
+                            </span>
+                          )}
+                        </h4>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-sm">
+                        <div className="md:col-span-2">
+                          <span className="font-medium">Address:</span> {address.address}
+                        </div>
+                        <div>
+                          <span className="font-medium">City:</span> {address.city}
+                        </div>
+                        <div>
+                          <span className="font-medium">State:</span> {address.state}
+                        </div>
+                        <div>
+                          <span className="font-medium">ZIP:</span> {address.zipCode}
+                        </div>
+                        <div>
+                          <span className="font-medium">Country:</span> {address.country}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+
+          {customer.contacts && customer.contacts.length > 0 && (
+            <>
+              <Separator className="dark:bg-slate-700" />
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">Customer Contacts</h3>
+                <div className="space-y-4">
+                  {customer.contacts.map((contact) => (
+                    <div key={contact.id} className="border rounded-lg p-4 dark:border-slate-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">
+                          {contact.name}
+                          {contact.isPrimary && (
+                            <span className="ml-2 text-xs bg-green-100 text-green-700 dark:bg-green-900/20 dark:text-green-400 px-2 py-1 rounded">
+                              Primary Contact
+                            </span>
+                          )}
+                        </h4>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                        <div>
+                          <span className="font-medium">Position:</span> {contact.position}
+                        </div>
+                        <div>
+                          <span className="font-medium">Phone:</span> {contact.phone}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           <Separator className="dark:bg-slate-700" />
 

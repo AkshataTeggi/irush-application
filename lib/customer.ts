@@ -1,7 +1,7 @@
 import type { CreateCustomerDto, UpdateCustomerDto, Customer, CustomerSearchParams } from "@/types/customer"
+import { API_BASE_URL } from "./constants"
 
 // API configuration
-const API_BASE_URL = "http://irush-server.rushpcb.com:5000"
 const API_ENDPOINTS = {
   customers: "/customer",
   search: "/customer/search",

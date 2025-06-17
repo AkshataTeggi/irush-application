@@ -25,11 +25,14 @@ export default function CustomersPage() {
     setIsLoading(true)
     setError(null)
     try {
+      console.log("Loading customers...")
       const data = await fetchCustomers()
+      console.log("Customers loaded:", data)
       setCustomers(data)
     } catch (err) {
-      setError("Error loading customers. Please try again.")
-      console.error(err)
+      console.error("Load customers error:", err)
+      const errorMessage = err instanceof Error ? err.message : "Unknown error occurred"
+      setError(`Error loading customers: ${errorMessage}`)
     } finally {
       setIsLoading(false)
     }
@@ -69,7 +72,12 @@ export default function CustomersPage() {
   }
 
   if (error) {
-    return <CustomerError error={error} />
+    return (
+      <div className="space-y-6">
+        <CustomerHeader onRefresh={handleRefresh} />
+        <CustomerError error={error} onRetry={loadCustomers} />
+      </div>
+    )
   }
 
   return (
