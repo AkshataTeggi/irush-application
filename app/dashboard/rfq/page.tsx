@@ -103,7 +103,6 @@ import { RFQTabs } from "@/components/rfq/rfq-tabs"
 import { DeleteConfirmDialog } from "@/components/department/delete-confirm-dialog"
 import { RFQLoading } from "@/components/rfq/rfq-loading"
 import { RFQError } from "@/components/rfq/rfq-error"
-import { fetchRFQs, deleteRFQ } from "@/lib/rfq"
 import type { RFQ } from "@/types/rfq"
 
 export default function RFQPage() {
@@ -185,3 +184,12 @@ export default function RFQPage() {
     </div>
   )
 }
+async function fetchRFQs(statusFilter?: string, customerFilter?: string): Promise<RFQ[]> {
+  // TODO: Replace with actual API call
+  return [];
+}
+
+function deleteRFQ(id: string) {
+  throw new Error("Function not implemented.")
+}
+

@@ -1,5 +1,6 @@
+import { API_BASE_URL } from "./constants"
+
 // API configuration for RFQ options
-const API_BASE_URL = "http://irush-server.rushpcb.com:5000"
 const API_ENDPOINTS = {
   services: "/services",
   specifications: "/specifications",
