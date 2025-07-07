@@ -1,10 +1,10 @@
 "use client"
 
-import { useMediaQuery } from "@/hooks/use-media-query"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DepartmentList } from "@/components/department/department-list"
 import { DepartmentListMobile } from "@/components/department/department-list-mobile"
 import type { Department } from "@/types/department"
+import { useMediaQuery } from "@/hooks/use-media-query"
 
 interface DepartmentTabsProps {
   activeTab: string
